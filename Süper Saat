@@ -1,0 +1,944 @@
+import time
+import os
+import sys
+from datetime import datetime, timedelta
+import math
+
+def clear_screen():
+    """Ekranı temizle"""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def wait_for_enter(prompt="\nAna menüye dönmek için ENTER'a basın..."):
+    """ENTER bekleyen fonksiyon"""
+    print(prompt)
+    try:
+        input()
+    except:
+        pass
+
+def simple_terminal_clock():
+    """Basit terminal saat uygulaması"""
+    print("\n" + "="*40)
+    print("BASİT TERMİNAL SAATİ".center(40))
+    print("="*40)
+    print("\nSaat gösteriliyor... (Durdurmak için ENTER'a basın)")
+    time.sleep(2)
+    
+    running = True
+    
+    while running:
+        clear_screen()
+        
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        current_date = now.strftime("%d/%m/%Y")
+        day_name = now.strftime("%A")
+        
+        print("\n" + "="*40)
+        print("SAAT".center(40))
+        print("="*40)
+        print()
+        print(current_time.center(40))
+        print()
+        print(current_date.center(40))
+        print(day_name.center(40))
+        print()
+        print("="*40)
+        print("\nDurdurmak için ENTER'a basın...")
+        
+        # 0.5 saniye bekle ve ENTER kontrolü yap
+        start_time = time.time()
+        while time.time() - start_time < 0.5:
+            if os.name == 'nt':  # Windows
+                import msvcrt
+                if msvcrt.kbhit():
+                    key = msvcrt.getch()
+                    if key == b'\r':  # ENTER tuşu
+                        running = False
+                        break
+            else:  # Linux/Mac
+                import select
+                import termios
+                import tty
+                
+                fd = sys.stdin.fileno()
+                old_settings = termios.tcgetattr(fd)
+                try:
+                    tty.setraw(fd)
+                    if select.select([sys.stdin], [], [], 0)[0]:
+                        key = sys.stdin.read(1)
+                        if key == '\n':  # ENTER tuşu
+                            running = False
+                            break
+                finally:
+                    termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            time.sleep(0.01)
+    
+    print("\nSaat durduruldu.")
+
+def ascii_clock():
+    """ASCII art saat"""
+    print("\n" + "="*50)
+    print("ASCII ART SAAT".center(50))
+    print("="*50)
+    print("\nASCII saat gösteriliyor... (Durdurmak için ENTER'a basın)")
+    time.sleep(2)
+    
+    # Basit ASCII rakamlar
+    ascii_digits = {
+        '0': ["  ###  ", " #   # ", "#     #", "#     #", " #   # ", "  ###  "],
+        '1': ["   #   ", "  ##   ", "   #   ", "   #   ", "   #   ", " ##### "],
+        '2': [" ##### ", "#     #", "     # ", "    #  ", "   #   ", "#######"],
+        '3': [" ##### ", "#     #", "     # ", "  ###  ", "     # ", " ##### "],
+        '4': ["#      ", "#    # ", "#    # ", "#######", "     # ", "     # "],
+        '5': ["#######", "#      ", "#      ", "###### ", "     # ", "###### "],
+        '6': ["  ###  ", " #     ", "#      ", "###### ", "#     #", " ##### "],
+        '7': ["#######", "     # ", "    #  ", "   #   ", "  #    ", " #     "],
+        '8': [" ##### ", "#     #", "#     #", " ##### ", "#     #", " ##### "],
+        '9': [" ##### ", "#     #", "#     #", " ######", "     # ", "  ###  "],
+        ':': ["   ", " # ", "   ", " # ", "   ", "   "]
+    }
+    
+    running = True
+    
+    while running:
+        clear_screen()
+        
+        now = datetime.now()
+        time_str = now.strftime("%H:%M:%S")
+        date_str = now.strftime("%d/%m/%Y")
+        day_str = now.strftime("%A")
+        
+        print("\n" + "="*50)
+        print("ASCII SAAT".center(50))
+        print("="*50)
+        print()
+        
+        # ASCII rakamları yazdır
+        lines = [""] * 6
+        for char in time_str:
+            digit_lines = ascii_digits.get(char, ["       "]*6)
+            for i in range(6):
+                lines[i] += digit_lines[i] + "  "
+        
+        for line in lines:
+            print(line.center(50))
+        
+        print()
+        print("-"*50)
+        print(f"Tarih: {date_str}".center(50))
+        print(f"Gün: {day_str}".center(50))
+        print("="*50)
+        print("\nDurdurmak için ENTER'a basın...")
+        
+        # ENTER kontrolü
+        start_time = time.time()
+        while time.time() - start_time < 0.5:
+            if os.name == 'nt':  # Windows
+                import msvcrt
+                if msvcrt.kbhit():
+                    key = msvcrt.getch()
+                    if key == b'\r':  # ENTER tuşu
+                        running = False
+                        break
+            else:  # Linux/Mac
+                import select
+                import termios
+                import tty
+                
+                fd = sys.stdin.fileno()
+                old_settings = termios.tcgetattr(fd)
+                try:
+                    tty.setraw(fd)
+                    if select.select([sys.stdin], [], [], 0)[0]:
+                        key = sys.stdin.read(1)
+                        if key == '\n':  # ENTER tuşu
+                            running = False
+                            break
+                finally:
+                    termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            time.sleep(0.01)
+    
+    print("\nASCII saat durduruldu.")
+
+def simple_analog_clock():
+    """Basit analog saat"""
+    print("\n" + "="*40)
+    print("BASİT ANALOG SAAT".center(40))
+    print("="*40)
+    print("\nAnalog saat gösteriliyor... (Durdurmak için ENTER'a basın)")
+    time.sleep(2)
+    
+    running = True
+    
+    while running:
+        clear_screen()
+        
+        now = datetime.now()
+        hour = now.hour % 12
+        minute = now.minute
+        second = now.second
+        
+        print("\n" + "="*40)
+        print("ANALOG SAAT".center(40))
+        print("="*40)
+        print()
+        
+        # Basit analog saat gösterimi
+        clock_face = [
+            "       12       ",
+            "    11     1    ",
+            "  10         2  ",
+            " 9           3 ",
+            "8             4",
+            " 7           5 ",
+            "  6         8  ",
+            "    5     7    ",
+            "       6       "
+        ]
+        
+        for line in clock_face:
+            print(line.center(40))
+        
+        print()
+        print(f"Saatiniz: {hour:02d}:{minute:02d}:{second:02d}".center(40))
+        print()
+        print("-"*40)
+        print(f"Tarih: {now.strftime('%d/%m/%Y')}".center(40))
+        print("="*40)
+        print("\nDurdurmak için ENTER'a basın...")
+        
+        # ENTER kontrolü
+        start_time = time.time()
+        while time.time() - start_time < 0.5:
+            if os.name == 'nt':  # Windows
+                import msvcrt
+                if msvcrt.kbhit():
+                    key = msvcrt.getch()
+                    if key == b'\r':  # ENTER tuşu
+                        running = False
+                        break
+            else:  # Linux/Mac
+                import select
+                import termios
+                import tty
+                
+                fd = sys.stdin.fileno()
+                old_settings = termios.tcgetattr(fd)
+                try:
+                    tty.setraw(fd)
+                    if select.select([sys.stdin], [], [], 0)[0]:
+                        key = sys.stdin.read(1)
+                        if key == '\n':  # ENTER tuşu
+                            running = False
+                            break
+                finally:
+                    termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            time.sleep(0.01)
+    
+    print("\nAnalog saat durduruldu.")
+
+def alarm_clock():
+    """Alarm özellikli saat"""
+    print("\n" + "="*50)
+    print("ALARMLI SAAT".center(50))
+    print("="*50)
+    
+    # Alarm zamanını ayarla
+    alarm_time = input("\nAlarm zamanını girin (HH:MM formatında): ")
+    
+    try:
+        alarm_hour, alarm_minute = map(int, alarm_time.split(':'))
+        
+        if not (0 <= alarm_hour <= 23 and 0 <= alarm_minute <= 59):
+            raise ValueError("Geçersiz saat veya dakika!")
+        
+        print(f"\nAlarm {alarm_hour:02d}:{alarm_minute:02d} için ayarlandı!")
+        print("Alarm çalarken ENTER'a basarak durdurabilirsiniz...")
+        time.sleep(2)
+        
+        alarm_triggered = False
+        running = True
+        
+        while running:
+            clear_screen()
+            
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            current_hour = now.hour
+            current_minute = now.minute
+            current_second = now.second
+            
+            print("\n" + "="*50)
+            print("ALARMLI SAAT".center(50))
+            print("="*50)
+            print()
+            print(f"ŞU AN: {current_time}".center(50))
+            print(f"ALARM: {alarm_hour:02d}:{alarm_minute:02d}".center(50))
+            print()
+            
+            # Alarm yaklaşma göstergesi
+            current_total_minutes = current_hour * 60 + current_minute
+            alarm_total_minutes = alarm_hour * 60 + alarm_minute
+            
+            if current_total_minutes < alarm_total_minutes:
+                minutes_left = alarm_total_minutes - current_total_minutes
+                progress = 1 - (minutes_left / (24 * 60))  # 24 saatlik döngü
+                bar_length = 40
+                filled = int(bar_length * progress)
+                bar = "█" * filled + "░" * (bar_length - filled)
+                print(f"Alarma kalan: {minutes_left} dakika".center(50))
+                print(f"[{bar}]".center(50))
+            
+            print("="*50)
+            print("\nDurdurmak için ENTER'a basın...")
+            
+            # Alarm kontrolü
+            if (current_hour == alarm_hour and 
+                current_minute == alarm_minute and 
+                not alarm_triggered):
+                
+                print("\n" + "!"*50)
+                print("ALARM ÇALIYOR!".center(50))
+                print("!"*50)
+                print("\nENTER'a basarak alarmı durdurun...")
+                
+                # Alarm sesi çal
+                beep_count = 0
+                max_beeps = 30  # Maksimum bip sayısı
+                
+                while beep_count < max_beeps:
+                    # ENTER kontrolü
+                    enter_pressed = False
+                    if os.name == 'nt':  # Windows
+                        import msvcrt
+                        if msvcrt.kbhit():
+                            key = msvcrt.getch()
+                            if key == b'\r':
+                                enter_pressed = True
+                    else:  # Linux/Mac
+                        import select
+                        if select.select([sys.stdin], [], [], 0)[0]:
+                            sys.stdin.read(1)  # Buffer'ı temizle
+                            enter_pressed = True
+                    
+                    if enter_pressed:
+                        print("\nAlarm durduruldu!")
+                        alarm_triggered = True
+                        running = False
+                        break
+                    
+                    # Bip sesi
+                    if os.name == 'nt':  # Windows
+                        import winsound
+                        winsound.Beep(1000, 300)
+                    else:  # Mac/Linux
+                        print('\a', end='', flush=True)
+                    
+                    beep_count += 1
+                    time.sleep(0.5)
+                
+                if beep_count >= max_beeps:
+                    alarm_triggered = True
+                    print("\nAlarm otomatik durduruldu!")
+                    time.sleep(2)
+            
+            # ENTER kontrolü (alarm çalmıyorken)
+            start_time = time.time()
+            while time.time() - start_time < 1:  # 1 saniye bekle
+                if os.name == 'nt':  # Windows
+                    import msvcrt
+                    if msvcrt.kbhit():
+                        key = msvcrt.getch()
+                        if key == b'\r':
+                            print("\nAlarm saati durduruldu!")
+                            running = False
+                            break
+                else:  # Linux/Mac
+                    import select
+                    if select.select([sys.stdin], [], [], 0)[0]:
+                        sys.stdin.read(1)  # Buffer'ı temizle
+                        print("\nAlarm saati durduruldu!")
+                        running = False
+                        break
+                time.sleep(0.01)
+            
+            if not running:
+                break
+            
+    except ValueError as e:
+        print(f"\nHata: {e}")
+        print("Lütfen HH:MM formatında geçerli bir zaman girin (örneğin: 14:30)")
+        wait_for_enter()
+    except Exception as e:
+        print(f"\nBeklenmeyen hata: {e}")
+        wait_for_enter()
+
+def stopwatch():
+    """Kronometre - Düzeltilmiş versiyon"""
+    print("\n" + "="*50)
+    print("KRONOMETRE".center(50))
+    print("="*50)
+    
+    print("\nBaşlatmak için ENTER'a basın...")
+    try:
+        input()
+    except KeyboardInterrupt:
+        print("\nİptal edildi!")
+        return
+    
+    start_time = time.time()
+    last_update_time = start_time
+    print("\nKronometre başladı!")
+    print("Durdurmak için ENTER'a basın...")
+    print("(S: Tur zamanı kaydet)")
+    
+    running = True
+    lap_times = []
+    last_lap_time = start_time
+    
+    try:
+        while running:
+            current_time = time.time()
+            
+            # Her 0.01 saniyede bir güncelle (daha akıcı)
+            if current_time - last_update_time >= 0.01:
+                elapsed_time = current_time - start_time
+                
+                # Saat, dakika, saniye, milisaniye
+                hours = int(elapsed_time // 3600)
+                minutes = int((elapsed_time % 3600) // 60)
+                seconds = int(elapsed_time % 60)
+                milliseconds = int((elapsed_time * 1000) % 1000)
+                
+                clear_screen()
+                
+                print("\n" + "="*50)
+                print("KRONOMETRE".center(50))
+                print("="*50)
+                print()
+                
+                # Büyük saat görünümü
+                time_display = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+                ms_display = f".{milliseconds:03d}"
+                print("╔════════════════════════════════════════════════╗")
+                print("║" + " " * 48 + "║")
+                print("║" + time_display.center(48) + "║")
+                print("║" + ms_display.center(48) + "║")
+                print("║" + " " * 48 + "║")
+                print("╚════════════════════════════════════════════════╝")
+                print()
+                
+                # İlerleme çubuğu (60 saniyelik döngü)
+                progress_seconds = seconds % 60
+                progress = progress_seconds / 60
+                bar_length = 40
+                filled = int(bar_length * progress)
+                bar = "█" * filled + "░" * (bar_length - filled)
+                print(f"Dakika içinde: {progress_seconds:2d} saniye".center(50))
+                print(f"[{bar}]".center(50))
+                print()
+                
+                # Tur zamanları
+                if lap_times:
+                    print("-"*50)
+                    print("TUR ZAMANLARI:")
+                    max_laps_to_show = 5  # Ekranda gösterilecek maksimum tur sayısı
+                    start_index = max(0, len(lap_times) - max_laps_to_show)
+                    
+                    for i, lap_time in enumerate(lap_times[start_index:], start_index + 1):
+                        lap_h = int(lap_time // 3600)
+                        lap_m = int((lap_time % 3600) // 60)
+                        lap_s = int(lap_time % 60)
+                        lap_ms = int((lap_time * 1000) % 1000)
+                        print(f"Tur {i}: {lap_h:02d}:{lap_m:02d}:{lap_s:02d}.{lap_ms:03d}")
+                    
+                    if len(lap_times) > max_laps_to_show:
+                        print(f"... ve {len(lap_times) - max_laps_to_show} tur daha")
+                    print("-"*50)
+                
+                print("\nKONTROLLER:")
+                print("ENTER: Durdur")
+                print("S: Tur zamanı kaydet")
+                print("="*50)
+                
+                last_update_time = current_time
+            
+            # Klavye kontrolü
+            key_pressed = False
+            key_char = None
+            
+            if os.name == 'nt':  # Windows
+                import msvcrt
+                if msvcrt.kbhit():
+                    key = msvcrt.getch()
+                    key_pressed = True
+                    if key == b'\r':  # ENTER
+                        running = False
+                        break
+                    elif key == b's' or key == b'S':  # S tuşu
+                        # Tur zamanı kaydet
+                        current_lap_time = time.time()
+                        lap_elapsed = current_lap_time - last_lap_time
+                        lap_times.append(lap_elapsed)
+                        last_lap_time = current_lap_time
+                        print(f"\nTur {len(lap_times)} kaydedildi!")
+                        time.sleep(0.3)
+                        continue
+            
+            else:  # Linux/Mac
+                import select
+                import termios
+                import tty
+                
+                fd = sys.stdin.fileno()
+                old_settings = termios.tcgetattr(fd)
+                try:
+                    tty.setraw(fd)
+                    if select.select([sys.stdin], [], [], 0)[0]:
+                        key = sys.stdin.read(1)
+                        key_pressed = True
+                        if key == '\n':  # ENTER
+                            running = False
+                            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                            break
+                        elif key == 's' or key == 'S':  # S tuşu
+                            # Tur zamanı kaydet
+                            current_lap_time = time.time()
+                            lap_elapsed = current_lap_time - last_lap_time
+                            lap_times.append(lap_elapsed)
+                            last_lap_time = current_lap_time
+                            print(f"\nTur {len(lap_times)} kaydedildi!")
+                            time.sleep(0.3)
+                            continue
+                finally:
+                    if os.name != 'nt':
+                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            
+            # CPU kullanımını azaltmak için küçük bir bekleme
+            time.sleep(0.001)
+    
+    except KeyboardInterrupt:
+        print("\nKronometre durduruldu!")
+    except Exception as e:
+        print(f"\nHata: {e}")
+    
+    finally:
+        # Sonuçları göster
+        clear_screen()
+        print("\n" + "="*50)
+        print("KRONOMETRE SONUÇLARI".center(50))
+        print("="*50)
+        
+        total_time = time.time() - start_time
+        total_h = int(total_time // 3600)
+        total_m = int((total_time % 3600) // 60)
+        total_s = int(total_time % 60)
+        total_ms = int((total_time * 1000) % 1000)
+        
+        print(f"\nTOPLAM SÜRE:")
+        print("╔════════════════════════════════════════════════╗")
+        print("║" + " " * 48 + "║")
+        print("║" + f"{total_h:02d}:{total_m:02d}:{total_s:02d}".center(48) + "║")
+        print("║" + f".{total_ms:03d}".center(48) + "║")
+        print("║" + " " * 48 + "║")
+        print("╚════════════════════════════════════════════════╝")
+        print()
+        
+        if lap_times:
+            print("-"*50)
+            print("TUR ANALİZİ:")
+            print("-"*50)
+            
+            all_lap_times = []
+            for i, lap_time in enumerate(lap_times, 1):
+                lap_h = int(lap_time // 3600)
+                lap_m = int((lap_time % 3600) // 60)
+                lap_s = int(lap_time % 60)
+                lap_ms = int((lap_time * 1000) % 1000)
+                
+                print(f"Tur {i:2d}: {lap_h:02d}:{lap_m:02d}:{lap_s:02d}.{lap_ms:03d}")
+                all_lap_times.append(lap_time)
+            
+            # İstatistikler
+            if len(lap_times) > 1:
+                fastest = min(all_lap_times)
+                slowest = max(all_lap_times)
+                average = sum(all_lap_times) / len(all_lap_times)
+                
+                print("-"*50)
+                print("İSTATİSTİKLER:")
+                
+                # En hızlı tur
+                f_h = int(fastest // 3600)
+                f_m = int((fastest % 3600) // 60)
+                f_s = int(fastest % 60)
+                f_ms = int((fastest * 1000) % 1000)
+                print(f"En hızlı tur: {f_h:02d}:{f_m:02d}:{f_s:02d}.{f_ms:03d}")
+                
+                # En yavaş tur
+                s_h = int(slowest // 3600)
+                s_m = int((slowest % 3600) // 60)
+                s_s = int(slowest % 60)
+                s_ms = int((slowest * 1000) % 1000)
+                print(f"En yavaş tur: {s_h:02d}:{s_m:02d}:{s_s:02d}.{s_ms:03d}")
+                
+                # Ortalama tur
+                a_h = int(average // 3600)
+                a_m = int((average % 3600) // 60)
+                a_s = int(average % 60)
+                a_ms = int((average * 1000) % 1000)
+                print(f"Ortalama tur: {a_h:02d}:{a_m:02d}:{a_s:02d}.{a_ms:03d}")
+        
+        print("\n" + "="*50)
+
+def countdown_timer():
+    """Geri sayım sayacı"""
+    print("\n" + "="*40)
+    print("GERİ SAYIM SAYACI".center(40))
+    print("="*40)
+    
+    try:
+        minutes = int(input("\nKaç dakika?: "))
+        if minutes <= 0:
+            print("Lütfen pozitif bir sayı girin!")
+            wait_for_enter()
+            return
+            
+        total_seconds = minutes * 60
+        
+        print(f"\n{minutes} dakika geri sayım başlıyor...")
+        print("ENTER'a basarak duraklatabilir veya durdurabilirsiniz.")
+        time.sleep(2)
+        
+        running = True
+        paused = False
+        remaining = total_seconds
+        start_countdown_time = time.time()
+        
+        while running and remaining >= 0:
+            if not paused:
+                mins, secs = divmod(remaining, 60)
+                
+                clear_screen()
+                
+                print("\n" + "="*50)
+                print("GERİ SAYIM SAYACI".center(50))
+                print("="*50)
+                print()
+                print("KALAN SÜRE:".center(50))
+                
+                # Büyük sayı gösterimi
+                time_display = f"{mins:02d}:{secs:02d}"
+                print("╔════════════════════════════════════════════════╗")
+                print("║" + " " * 48 + "║")
+                print("║" + time_display.center(48) + "║")
+                print("║" + " " * 48 + "║")
+                print("╚════════════════════════════════════════════════╝")
+                print()
+                
+                # İlerleme çubuğu
+                progress = (total_seconds - remaining) / total_seconds
+                bar_length = 40
+                filled = int(bar_length * progress)
+                bar = "█" * filled + "░" * (bar_length - filled)
+                print(f"[{bar}]".center(50))
+                print(f"%{progress*100:.1f} tamamlandı".center(50))
+                print()
+                
+                # Kalan süre tahmini
+                if progress > 0:
+                    elapsed_time = time.time() - start_countdown_time
+                    estimated_total = elapsed_time / progress
+                    estimated_remaining = estimated_total - elapsed_time
+                    est_m, est_s = divmod(int(estimated_remaining), 60)
+                    print(f"Tahmini bitiş: {est_m:02d}:{est_s:02d}".center(50))
+                
+                print()
+                print("="*50)
+                print("\nENTER: Duraklat/Durdur")
+                
+                if remaining == 0:
+                    print("\n" + "!"*50)
+                    print("SÜRE DOLDU!".center(50))
+                    print("!"*50)
+                    
+                    # Bip sesi
+                    for _ in range(5):
+                        if os.name == 'nt':
+                            import winsound
+                            winsound.Beep(1000, 300)
+                            winsound.Beep(1500, 300)
+                        else:
+                            print('\a', end='', flush=True)
+                        time.sleep(0.3)
+                    
+                    time.sleep(2)
+                    break
+                
+                remaining -= 1
+            
+            # ENTER kontrolü
+            enter_pressed = False
+            if os.name == 'nt':  # Windows
+                import msvcrt
+                if msvcrt.kbhit():
+                    key = msvcrt.getch()
+                    if key == b'\r':
+                        enter_pressed = True
+            else:  # Linux/Mac
+                import select
+                if select.select([sys.stdin], [], [], 0)[0]:
+                    sys.stdin.read(1)  # Buffer'ı temizle
+                    enter_pressed = True
+            
+            if enter_pressed:
+                if remaining > 0:
+                    paused = not paused
+                    if paused:
+                        print("\nDuraklatıldı! Devam etmek için tekrar ENTER'a basın.")
+                    else:
+                        print("\nDevam ediliyor...")
+                        start_countdown_time = time.time() - (total_seconds - remaining)
+                    time.sleep(0.5)
+                else:
+                    running = False
+            
+            if not paused:
+                time.sleep(1)
+            
+    except ValueError:
+        print("\nHata: Geçerli bir sayı girin!")
+        wait_for_enter()
+    except KeyboardInterrupt:
+        print("\nGeri sayım iptal edildi!")
+
+def digital_world_clock():
+    """Dünya saatleri - Düzeltilmiş versiyon"""
+    print("\n" + "="*50)
+    print("DÜNYA SAATLERİ".center(50))
+    print("="*50)
+    
+    # Şehirler ve UTC farkları
+    cities = {
+        "İstanbul": 3,
+        "Londra": 0,
+        "New York": -5,
+        "Tokyo": 9,
+        "Moskova": 3,
+        "Paris": 1,
+        "Berlin": 1,
+        "Dubai": 4,
+        "Hong Kong": 8,
+        "Sydney": 11,
+        "Los Angeles": -8,
+        "Mumbai": 5.5,
+        "Kahire": 2,
+        "Roma": 1,
+        "Madrid": 1,
+        "Toronto": -5,
+        "Şanghay": 8,
+        "Singapur": 8,
+        "Seul": 9,
+        "Mexico City": -6
+    }
+    
+    running = True
+    
+    print("\nDünya saatleri gösteriliyor... (Durdurmak için ENTER'a basın)")
+    time.sleep(2)
+    
+    last_update_time = time.time()
+    
+    try:
+        while running:
+            current_time = time.time()
+            
+            # Her 0.5 saniyede bir güncelle
+            if current_time - last_update_time >= 0.5:
+                clear_screen()
+                
+                now = datetime.now()
+                
+                # UTC zamanını hesapla
+                # datetime.utcnow() yerine alternatif
+                utc_offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+                utc_offset_hours = utc_offset / 3600
+                utc_time = now - timedelta(hours=utc_offset_hours)
+                
+                print("\n" + "="*60)
+                print("DÜNYA SAATLERİ".center(60))
+                print("="*60)
+                print()
+                print(f"YEREL SAAT: {now.strftime('%H:%M:%S')}".center(60))
+                print(f"UTC ZAMANI: {utc_time.strftime('%H:%M:%S')}".center(60))
+                print()
+                print("-"*60)
+                
+                # Sütunlar için format
+                print(f"{'ŞEHİR':<20} {'SAAT':<15} {'FARK (UTC)':<12} {'DURUM'}")
+                print("-"*60)
+                
+                # Şehirleri UTC farkına göre sırala
+                sorted_cities = sorted(cities.items(), key=lambda x: x[1])
+                
+                for city, offset in sorted_cities:
+                    city_time = utc_time + timedelta(hours=offset)
+                    time_str = city_time.strftime('%H:%M:%S')
+                    
+                    # UTC farkını göster
+                    if offset >= 0:
+                        offset_str = f"UTC+{offset}"
+                    else:
+                        offset_str = f"UTC{offset}"  # Negatif sayılar zaten - işaretli
+                    
+                    # Gece/gündüz göstergesi
+                    hour = city_time.hour
+                    if 6 <= hour < 12:
+                        status = "Sabah ☀️"
+                    elif 12 <= hour < 18:
+                        status = "Öğlen ☀️"
+                    elif 18 <= hour < 22:
+                        status = "Akşam 🌆"
+                    else:
+                        status = "Gece 🌙"
+                    
+                    print(f"{city:<20} {time_str:<15} {offset_str:<12} {status}")
+                
+                print("-"*60)
+                print(f"\nGüncelleme: {datetime.now().strftime('%H:%M:%S')}")
+                print("Durdurmak için ENTER'a basın...")
+                print("="*60)
+                
+                last_update_time = current_time
+            
+            # ENTER kontrolü
+            enter_pressed = False
+            if os.name == 'nt':  # Windows
+                import msvcrt
+                if msvcrt.kbhit():
+                    key = msvcrt.getch()
+                    if key == b'\r':
+                        enter_pressed = True
+            else:  # Linux/Mac
+                import select
+                if select.select([sys.stdin], [], [], 0)[0]:
+                    sys.stdin.read(1)  # Buffer'ı temizle
+                    enter_pressed = True
+            
+            if enter_pressed:
+                running = False
+                break
+            
+            # CPU kullanımını azalt
+            time.sleep(0.01)
+    
+    except KeyboardInterrupt:
+        print("\nDünya saatleri durduruldu!")
+    except Exception as e:
+        print(f"\nHata: {e}")
+    
+    print("\nDünya saatleri durduruldu.")
+
+def menu():
+    """Ana menü"""
+    while True:
+        clear_screen()
+        
+        print("\n" + "="*60)
+        print("PYTHON SAAT UYGULAMALARI".center(60))
+        print("="*60)
+        
+        # Sistem bilgisi
+        print(f"\nSistem: {'Windows' if os.name == 'nt' else 'Linux/Mac'}")
+        print(f"Tarih: {datetime.now().strftime('%d/%m/%Y')}")
+        print(f"Saat: {datetime.now().strftime('%H:%M:%S')}")
+        
+        print("\n" + "="*60)
+        print("\nHangi saat uygulamasını çalıştırmak istersiniz?")
+        print("\n1. Basit Terminal Saati")
+        print("2. ASCII Art Saat")
+        print("3. Basit Analog Saat")
+        print("4. Alarmlı Saat")
+        print("5. Kronometre")
+        print("6. Geri Sayım Sayacı")
+        print("7. Dünya Saatleri")
+        print("8. Çıkış")
+        
+        print("\n" + "="*60)
+        
+        try:
+            choice = input("\nSeçiminiz (1-8): ").strip()
+            
+            if choice == "1":
+                simple_terminal_clock()
+                wait_for_enter()
+            elif choice == "2":
+                ascii_clock()
+                wait_for_enter()
+            elif choice == "3":
+                simple_analog_clock()
+                wait_for_enter()
+            elif choice == "4":
+                alarm_clock()
+                wait_for_enter()
+            elif choice == "5":
+                stopwatch()
+                wait_for_enter()
+            elif choice == "6":
+                countdown_timer()
+                wait_for_enter()
+            elif choice == "7":
+                digital_world_clock()
+                wait_for_enter()
+            elif choice == "8":
+                print("\nÇıkılıyor...")
+                time.sleep(1)
+                break
+            else:
+                print("\nGeçersiz seçim! Lütfen 1-8 arasında bir sayı girin.")
+                time.sleep(1.5)
+        except KeyboardInterrupt:
+            print("\n\nMenüden çıkılıyor...")
+            time.sleep(1)
+            break
+        except Exception as e:
+            print(f"\nBeklenmeyen hata: {e}")
+            time.sleep(2)
+
+# Ana program
+if __name__ == "__main__":
+    try:
+        # Program başlığı
+        clear_screen()
+        print("\n" + "="*60)
+        print("PYTHON SAAT UYGULAMASI".center(60))
+        print("="*60)
+        print("\nHoş geldiniz!")
+        print("\nBu program çeşitli saat uygulamaları içerir.")
+        print("Tüm uygulamalar ENTER tuşuyla kontrol edilir.")
+        print("\nBaşlamak için ENTER'a basın...")
+        
+        try:
+            input()
+        except:
+            pass
+        
+        menu()
+        
+    except KeyboardInterrupt:
+        print("\n\nProgram sonlandırıldı.")
+    except Exception as e:
+        print(f"\nBeklenmeyen bir hata oluştu: {e}")
+    
+    finally:
+        print("\n" + "="*60)
+        print("Program sonlandırıldı.".center(60))
+        print("Çıkmak için ENTER'a basın...".center(60))
+        print("="*60)
+        
+        try:
+            input()
+        except:
+            pass
+
